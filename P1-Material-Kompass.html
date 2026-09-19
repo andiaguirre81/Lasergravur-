@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P1 Material-Kompass</title>
+<style>
+:root{--bg:#f4f1e9;--card:#fffdf8;--ink:#17352d;--muted:#65736d;--green:#426c5b;--terra:#b86449;--gold:#d4a94e;--line:#d8ddd7}
+*{box-sizing:border-box}body{margin:0;font:16px system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:950px;margin:auto;padding:24px}.hero{background:var(--ink);color:white;border-radius:22px;padding:24px;margin-bottom:18px}
+.hero h1{margin:0 0 7px;font-size:clamp(28px,5vw,46px)}.hero p{margin:0;opacity:.86}
+.controls{display:grid;grid-template-columns:1fr 220px;gap:10px;margin:18px 0}input,select{width:100%;padding:14px;border:1px solid var(--line);border-radius:13px;background:white;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 3px 15px #00000008}
+h2{margin:0 0 10px;font-size:22px}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:750;margin:0 5px 6px 0;background:#e3ece7}
+.badge.ir{background:#efe7dc}.badge.warn{background:#f5dfd7;color:#74311f}.row{padding:8px 0;border-top:1px solid #e9ece8}.row:first-of-type{border-top:0}
+.k{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}.v{margin-top:3px;line-height:1.35}.note{margin-top:18px;padding:15px;border-radius:15px;background:#fff8df;border:1px solid #eadca8;line-height:1.4}
+footer{color:var(--muted);font-size:13px;margin:18px 3px 30px}.empty{padding:25px;text-align:center;color:var(--muted)}
+@media(max-width:600px){.controls{grid-template-columns:1fr}main{padding:14px}}
+</style>
+</head>
+<body><main>
+<section class="hero"><h1>🔦 P1 Material-Kompass</h1><p>Welcher Laser? Vorbehandlung? Acrylfarbe oder Transferfolie? – passend zu deinem AtomStack P1 Dual.</p></section>
+<div class="controls"><input id="q" placeholder="Material suchen … z. B. Glas, Schiefer, Filz"><select id="filter"><option value="">Alle Materialien</option><option>Blau 455 nm</option><option>IR 1064 nm</option><option>Test / bedingt</option><option>Nicht lasern</option></select></div>
+<div id="grid" class="grid"></div>
+<div class="note"><b>Wichtig:</b> Das sind Startempfehlungen, keine garantierten Leistungswerte. Beschichtungen und Kunststoffe können unbekannte Zusätze enthalten. Erst Material identifizieren, klein testen, absaugen und den Laser nie unbeaufsichtigt betreiben. PVC/Vinyl und unbekannte chlorhaltige Kunststoffe nicht lasern.</div>
+<footer>Material-Kompass · persönliche P1-Arbeitshilfe · Einstellungen immer mit kleinem Materialtest verifizieren.</footer>
+</main>
+<script>
+const M=[
+["Holz / Sperrholz","Blau 455 nm","Direkt","Nein","Nein","Gravieren sehr gut; Schneiden je nach Stärke. Air Assist beim Schneiden hilfreich."],
+["Bambus","Blau 455 nm","Direkt","Nein","Nein","Sehr gut für Stifte, Brettchen und Anhänger. Maserung kann das Ergebnis beeinflussen."],
+["MDF","Blau 455 nm","Direkt","Nein","Nein","Gravieren/Schneiden möglich; gute Absaugung wegen Rauch und Klebstoffen."],
+["Kork","Blau 455 nm","Direkt","Nein","Nein","Niedrig starten: wird schnell dunkel."],
+["Papier / Karton","Blau 455 nm","Direkt","Nein","Nein","Sehr niedrige Leistung; hohe Brandgefahr."],
+["Naturleder","Blau 455 nm","Direkt","Nein","Nein","Nur echtes, geeignetes Leder. Kunstleder/PVC vermeiden."],
+["Filz – sicher identifiziert","Blau 455 nm","Direkt","Nein","Nein","Nur bei bekanntem Material. Natur-/geeigneter Polyesterfilz testen; unbekannte Mischungen vermeiden."],
+["Baumwolle / Canvas","Blau 455 nm","Direkt","Optional","Optional","Für dunkle Markierung direkt testen. Bei sehr hellem Canvas kann eine dünne schwarze, trockene Acrylschicht als Test helfen."],
+["Schiefer","Blau 455 nm","Direkt","Nein","Nein","Sehr geeignet; ergibt typischerweise eine helle Markierung."],
+["Stein / Ziegel","Blau 455 nm","Direkt","Nein","Nein","Kleinen Test machen; Ergebnis hängt stark von Mineral und Oberfläche ab."],
+["Klares Glas","Blau 455 nm","Schwarze Hilfsschicht","Ja – bevorzugt testen","Ja – alternativ testen","Der blaue Laser geht durch klares Glas weitgehend hindurch. Dünne, gleichmäßige schwarze Acrylfarbe oder geeignete dunkle Maskierung erhöht die Absorption. Niedrig starten, Bruchrisiko."],
+["Dunkles Glas","Blau 455 nm","Meist direkt / Test","Optional","Optional","Dunkle Oberfläche absorbiert besser; trotzdem Testfeld verwenden."],
+["Porzellan / Keramik, hell glasiert","Blau 455 nm","Dunkle Hilfsschicht testen","Ja","Ja – wenn lasergeeignet","Für helle Glasur zunächst schwarze Acrylfarbe als gleichmäßige Absorptionsschicht testen. Nicht jede Glasur reagiert gleich."],
+["Keramik, dunkel","Blau 455 nm","Direkt testen","Optional","Nein","Kleine Testmatrix; Glasuren unterscheiden sich deutlich."],
+["Eloxiertes Aluminium, schwarz","Blau 455 nm","Direkt","Nein","Nein","Der Diodenlaser entfernt/hellt die Beschichtung; sehr gut für schwarze Visitenkarten."],
+["Lackiertes / beschichtetes Metall","Blau 455 nm","Direkt","Nein","Nein","Markierung meist durch Abtrag der Beschichtung. Beschichtungsart vorher prüfen."],
+["Edelstahl blank","IR 1064 nm","Direkt","Nein","Nein","IR ist die erste Wahl für feine Metallmarkierungen; Testmatrix verwenden."],
+["Aluminium blank","IR 1064 nm","Direkt","Nein","Nein","IR testen; Resultat hängt von Legierung/Oberfläche ab."],
+["Messing / Kupfer / Edelmetalle","IR 1064 nm","Direkt","Nein","Nein","IR verwenden; feiner Spot eignet sich für Details. Parameter testen."],
+["Titan","IR 1064 nm","Direkt","Nein","Nein","IR verwenden; kleine Testmatrix."],
+["Schwarzes Acryl","IR 1064 nm","Direkt gravieren","Nein","Nein","IR eignet sich laut Hersteller zum Markieren; zum Schneiden ist beim P1 eher die blaue Diode für geeignetes dunkles Acryl vorgesehen."],
+["Dunkles, opakes Acryl","Blau 455 nm","Direkt","Nein","Nein","Gravieren und – abhängig von Typ/Dicke – schneiden. Nur lasergeeignetes Acryl."],
+["Klares Acryl","Test / bedingt","Nicht zuverlässig mit Blau","Nein","Dunkle Maskierung nur zum Experiment","455 nm passiert klares Acryl weitgehend. IR kann je nach Kunststoff reagieren, ist aber keine allgemeine Schneidlösung."],
+["ABS / unbekannter Kunststoff","Nicht lasern","Material erst eindeutig bestimmen","Nein","Nein","Nicht ohne genaue Werkstoffdaten lasern: Dämpfe, Schmelzen und Brand können problematisch sein."],
+["PVC / Vinyl","Nicht lasern","NICHT LASERN","Nein","Nein","Chlorhaltig: korrosive und gesundheitsschädliche Zersetzungsprodukte. Auch PVC-haltige Transferfolie nicht mitlasern."],
+["Spiegel","Test / bedingt","Rückseitenbeschichtung abhängig vom Aufbau","Nein","Nein","Nicht pauschal behandeln: Spiegelaufbau/Beschichtung prüfen; reflektierende Vorderseite nicht als normales Metall behandeln."]
+];
+function render(){
+ const q=document.querySelector("#q").value.toLowerCase(), f=document.querySelector("#filter").value;
+ const rows=M.filter(x=>(!q||x.join(" ").toLowerCase().includes(q))&&(!f||x[1]===f));
+ document.querySelector("#grid").innerHTML=rows.length?rows.map(x=>`<article class="card"><h2>${x[0]}</h2><span class="badge ${x[1].includes("IR")?"ir":x[1].includes("Nicht")?"warn":""}">${x[1]}</span>
+ <div class="row"><div class="k">Vorbereitung</div><div class="v">${x[2]}</div></div>
+ <div class="row"><div class="k">Acrylfarbe</div><div class="v">${x[3]}</div></div>
+ <div class="row"><div class="k">Transferfolie / Maskierung</div><div class="v">${x[4]}</div></div>
+ <div class="row"><div class="k">Praxis-Tipp</div><div class="v">${x[5]}</div></div></article>`).join(""):`<div class="empty">Kein Material gefunden.</div>`;
+}
+q.oninput=render;filter.onchange=render;render();
+</script></body></html>
